@@ -1,0 +1,17 @@
+@relation flu
+
+@attribute temperature {VH,H,N}
+@attribute headache {Y,N}
+@attribute weakness {Y,N}
+@attribute nausea {Y, N}
+@attribute flu {Y,N}
+
+@data
+VH,Y,Y,N,Y
+H,Y,N,Y,Y
+N,N,N,N,N
+N,Y,Y,Y,Y
+H,N,Y,N,Y
+H,N,Y,N,N
+N,N,Y,N,N
+N,N,Y,N,Y
