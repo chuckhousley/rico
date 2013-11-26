@@ -65,6 +65,21 @@ int main() {
             data.push_back(row);
         }
     }
+	cout << "List of Attributes:" << endl;
+	for( unsigned int i = 0; i < attr.size(); i++)
+	{
+	  cout << i << ". " << attr[i].name << endl;
+	}
+	int num = 0;
+	cout << "Please Enter How Many Decision Attributes You Would Like" << endl;
+	// Add a check 
+	cin >> num;
+	vector<int> decAttr(num,-1);
+	cout << "Please Enter the Numbers of All Decision Attributes" << endl;
+	for(unsigned int i = 0; i < num; i++)
+	{
+	cin >> decAttr[i];
+	}
 	// Generates Coverings single attr
 	for( unsigned int i = 0; i < attr.size(); i++)
 	{
