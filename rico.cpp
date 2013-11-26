@@ -19,7 +19,8 @@ int main() {
     string filename;
     string line;
     string relation;
-    
+    unsigned int maxAttr = 0, minCoverage = 1;
+	
     vector<attributes> attr;
     vector< vector<string> > data;
     vector<coverings> cover;
@@ -70,16 +71,20 @@ int main() {
 	{
 	  cout << i << ". " << attr[i].name << endl;
 	}
-	int num = 0;
+	unsigned int num = 0;
 	cout << "Please Enter How Many Decision Attributes You Would Like" << endl;
 	// Add a check 
-	cin >> num;
-	vector<int> decAttr(num,-1);
+	//cin >> num;
+	num = 1;
+	vector<unsigned int> decAttr(num,-1);
 	cout << "Please Enter the Numbers of All Decision Attributes" << endl;
 	for(unsigned int i = 0; i < num; i++)
 	{
-	cin >> decAttr[i];
+	  //cin >> decAttr[i];
 	}
+	decAttr[0] = 5;
+	cout << "Please Enter the Maxium # of attributes to cosider a covering" << endl; 
+	cin >> maxAttr; 
 	// Generates Coverings single attr
 	for( unsigned int i = 0; i < attr.size(); i++)
 	{
@@ -100,6 +105,15 @@ int main() {
 	  }
 	  cover.push_back(newCover);
 	}
+	// coverings to size maxAttr
+	
+	//rico
+	
+	//After Running rico 
+	cout << "Please Enter the Minimum Coverage required for a rule" << endl;
+	cin >> minCoverage;
+	
+	//Reporting 
 	
 	
 	
