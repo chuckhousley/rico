@@ -1,7 +1,7 @@
 /*
-  Rico
-  A Program by Chuck and Pearson
-  Presented by Computer Science 301
+Rico
+A Program by Chuck and Pearson
+Presented by Computer Science 301
 */
 #include <iostream>
 #include <fstream>
@@ -16,8 +16,8 @@ struct attributes{
 };
 
 struct coverings{
-   string P;
-   vector< vector<int> > rows;
+    string P;
+    vector< vector<int> > rows;
 };
 
 int main() {
@@ -25,11 +25,11 @@ int main() {
     string line;
     string relation;
     unsigned int maxAttr = 0, minCoverage = 1;
-        
+    
     vector<attributes> attr;
     vector< vector<string> > data;
     vector<coverings> cover;
-        
+    
     // Gets the name of the input file
     cout<<"Enter a filename: ";
     //cin>>filename;
@@ -43,7 +43,7 @@ int main() {
         exit(2);
     }
     
-        //Parses ARFF file
+    //Parses ARFF file
     while (getline(in, line)) {
         //Reading in the attributes
         if (line.substr(0,2) == "@a") {
@@ -75,16 +75,16 @@ int main() {
     }
     in.close();
     
-        cout << "\nList of Attributes:" << endl;
-        for( unsigned int i = 0; i < attr.size(); i++)
-        {
-         cout << i << ". " << attr[i].name << endl;
-        }
+    cout << "\nList of Attributes:" << endl;
+    for( unsigned int i = 0; i < attr.size(); i++)
+    {
+        cout << i << ". " << attr[i].name << endl;
+    }
     
-        unsigned int num = 0;
-        cout << "\nPlease enter how many decision attributes you would like: ";
+    unsigned int num = 0;
+    cout << "\nPlease enter how many decision attributes you would like: ";
     string num_input;
-        cin >> num_input;
+    cin >> num_input;
     num = atoi(num_input.c_str());
     
     while (num == 0 || num > attr.size()) {
@@ -92,74 +92,82 @@ int main() {
         cin >> num_input;
         num = atoi(num_input.c_str());
     }
-        num = 1; //TESTING PURPOSES ONLY
-    
-    
-        vector<unsigned int> decAttr(num,-1);
-        cout << "Please enter the numbers of all decision attributes: " << endl;
-        for(unsigned int i = 0; i < num; i++)
-        {
-        /*cout << "Attribute " << i << ": ";
+    num = 1; //TESTING PURPOSES ONLY
+
+
+    vector<unsigned int> decAttr(num,-1);
+    cout << "Please enter the numbers of all decision attributes: " << endl;
+    /*for(unsigned int i = 0; i < num; i++)
+    {
+        cout << "Attribute " << i << ": ";
         bool duplicate = true;
-		while (duplicate) {
-		duplicate = false;
-		string dec_input;
-		cin >> dec_input;
-		int dec_input_i = atoi(dec_input.c_str());
-		while (dec_input_i < 1 || dec_input_i > attr.size()-1) {
-		  cout << "Invalid input, try again: ";
-		  cin >> dec_input;
-			dec_input_i = atoi(dec_input.c_str());
-		}
-		for (int j = 0; j < i; j++) {
-			if (dec_input_i == decAttr[j]) {
-				duplicate = true;
-			}
-		}
-		if (!duplicate) {
-			decAttr[i] = dec_input_i;
-			break;
-		}
-		else {
-			cout << Duplicate number detected, please choose another: ";
-		}
-		}*/
-        }
-    
-        decAttr[0] = 5; //TESTING PURPOSES
-    //decAttr[1] = 4;
-        cout << "Please enter the maxium # of attributes to be considered as a covering: ";
-        cin >> maxAttr;
-    
-        // Generates Coverings single attr
-        for( unsigned int i = 0; i < attr.size(); i++)
-        {
-         coverings newCover;
-         newCover.P = attr[i].name;
-         for( unsigned int j = 0; j < data[i].size(); j++)
-         {
-         vector<int> rows;
-        for( unsigned int k = 0; k < data[i].size(); k++)
-        {                
-         if( (data[i][j] == data[i][k]) && j != k)
-                 {
-                 rows.push_back(j);
-            //cout << data[i][j] << "=" << data[i][k] <<endl;                        
-                 }
+        while (duplicate) {
+            duplicate = false;
+            string dec_input;
+            cin >> dec_input;
+            int dec_input_i = atoi(dec_input.c_str());
+            while (dec_input_i < 1 || dec_input_i > attr.size()-1) {
+                cout << "Invalid input, try again: ";
+                cin >> dec_input;
+                dec_input_i = atoi(dec_input.c_str());
+            }
+            for (int j = 0; j < i; j++) {
+                if (dec_input_i == decAttr[j]) {
+                    duplicate = true;
                 }
-                newCover.rows.push_back(rows);
-         }
-         cover.push_back(newCover);
+            }
+            if (!duplicate) {
+                decAttr[i] = dec_input_i;
+                break;
+            }
+            else {
+                cout << "Duplicate number detected, please choose another: ";
+            }
         }
+    }*/
+
+    decAttr[0] = 5; //TESTING PURPOSES
+    //decAttr[1] = 4;
     
-        // coverings to size maxAttr
-        
-        //rico
-        
-        //After Running rico
-        cout << "Please enter the minimum coverage required for a rule: ";
-        cin >> minCoverage;
+    string maxAttr_input;
+    cout << "Please enter the maxium # of attributes to be considered as a covering: ";
+    cin >> maxAttr_input;
+    maxAttr = atoi(maxAttr_input.c_str());
+    while (maxAttr == 0 || maxAttr > attr.size() - decAttr.size()) {
+        cout << "Invalid input, try again: ";
+        cin >> maxAttr_input;
+        maxAttr = atoi(maxAttr_input.c_str());
+    }
+
+    // Generates Coverings single attr
+    for( unsigned int i = 0; i < attr.size(); i++)
+    {
+        coverings newCover;
+        newCover.P = attr[i].name;
+        for( unsigned int j = 0; j < data[i].size(); j++)
+        {
+            vector<int> rows;
+            for( unsigned int k = 0; k < data[i].size(); k++)
+            {                
+                if( (data[i][j] == data[i][k]) && j != k)
+                {
+                    rows.push_back(j);
+                    //cout << data[i][j] << "=" << data[i][k] <<endl;                        
+                }
+            }
+            newCover.rows.push_back(rows);
+        }
+        cover.push_back(newCover);
+    }
+
+    // coverings to size maxAttr
     
+    //rico
+    
+    //After Running rico
+    cout << "Please enter the minimum coverage required for a rule: ";
+    cin >> minCoverage;
+
     string unnecessary_input;
     cout << "Should unnecessary conditions be dropped? (y/n): ";
     cin >> unnecessary_input;
