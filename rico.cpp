@@ -84,7 +84,8 @@ int main() {
 	}
 	decAttr[0] = 5;
 	cout << "Please Enter the Maxium # of attributes to cosider a covering" << endl; 
-	cin >> maxAttr; 
+	//cin >> maxAttr;
+    maxAttr = 2;	
 	// Generates Coverings single attr
 	for( unsigned int i = 0; i < attr.size(); i++)
 	{
@@ -106,12 +107,19 @@ int main() {
 	  cover.push_back(newCover);
 	}
 	// coverings to size maxAttr
+	for( unsigned int i = 0; i < attr.size(); i++)
+	{
+      for( unsigned int j = i; j < attr.size(); j++)
+	  {
+	     
+	  }
+    }
 	
 	//rico
 	
 	//After Running rico 
 	cout << "Please Enter the Minimum Coverage required for a rule" << endl;
-	cin >> minCoverage;
+	//cin >> minCoverage;
 	
 	//Reporting 
 	
