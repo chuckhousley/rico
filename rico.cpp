@@ -87,7 +87,7 @@ int main() {
         cin >> num_input;
         num = atoi(num_input.c_str());
     }
-	num = 2; //TESTING PURPOSES ONLY
+	num = 1; //TESTING PURPOSES ONLY
     
     
 	vector<unsigned int> decAttr(num,-1); 
@@ -102,7 +102,7 @@ int main() {
             cin >> dec_input;
             
             int dec_input_i = atoi(dec_input.c_str());
-            while (dec_input_i < 1) {
+            while (dec_input_i < 1 || dec_input_i > attr.size()-1) {
                 cout << "Invalid input, try again: ";
                 cin >> dec_input;
                 dec_input_i = atoi(dec_input.c_str());
@@ -125,7 +125,7 @@ int main() {
 	}
     
 	decAttr[0] = 5; //TESTING PURPOSES
-    decAttr[1] = 4;
+    //decAttr[1] = 4;
 	cout << "Please enter the maxium # of attributes to be considered as a covering: ";
 	cin >> maxAttr;
     
@@ -133,7 +133,7 @@ int main() {
 	for( unsigned int i = 0; i < attr.size(); i++)
 	{
 	  coverings newCover;
-	  newCover.P = (attr[i].name);
+	  newCover.P = attr[i].name;
 	  for( unsigned int j = 0; j < data[i].size(); j++)
 	  {
 	    vector<int> rows;
@@ -172,14 +172,16 @@ int main() {
 	//Reporting 
     cout << "\n----------OUTPUT----------\n";
     cout << "Name of input file: " << filename << endl;
-    cout << "Decision Attributes: ";
-    for (int i = 0; i < decAttr.size(); i++) {
-        cout << attr[decAttr[i]].name;
-        cout << ((i < decAttr.size()-1)? ", ":"");
-    }
     cout << "\nMaximum number of attributes to be considered for a covering: " << maxAttr;
     cout << "\nMinimum coverage required for a rule to be reported: " << minCoverage;
-    cout << "\nUnnecessary conditions have been " << ((unnecessary_dropped)? "dropped.": "left in.") << endl;
+    cout << "\nUnnecessary conditions have been " << ((unnecessary_dropped)? "dropped.\n": "left in.\n") << endl;
+    
+    cout << "Decision Attribute" << ((decAttr.size() > 1)? "s: [": ": [");
+    for (int i = 0; i < decAttr.size(); i++) {
+        cout << attr[decAttr[i]].name;
+        cout << ((i < decAttr.size()-1)? ", ":"]\n");
+    }
+    
     
     cout << endl; //one more empty line for the hell of it, and we're done
     return 0;
