@@ -20,70 +20,28 @@ struct coverings{
     vector< vector<int> > rows;
 };
 
+void Parser( vector<attributes> &attr, vector< vector<string> > &data);
+void listAttributes( vector < attributes > attr);
+void Report( string filename, int maxAttr, int minCoverage, bool unnecessary_dropped, vector <attributes> attr, vector <unsigned int> decAttr);
+
 int main() {
-    string filename;
-    string line;
-    string relation;
+    string filename = "I need to fix this";
+	string num_input;
     unsigned int maxAttr = 0, minCoverage = 1;
-    
+    unsigned int num = 0;
+	
     vector<attributes> attr;
     vector< vector<string> > data;
     vector<coverings> cover;
     
-    // Gets the name of the input file
-    cout<<"Enter a filename: ";
-    //cin>>filename;
-    filename = "table3_10_fg.arff"; //TESTING PURPOSES ONLY
+	// Does the File IO things 
+	// and parsers the Input
+	Parser( attr, data);
+   
+    // Lists Attributes
+    listAttributes( attr);   
     
-    ifstream in;
-    in.open(filename.c_str());
-    
-    if(!in.is_open()) {
-        cout << "Failed to open file" << endl;
-        exit(2);
-    }
-    
-    //Parses ARFF file
-    while (getline(in, line)) {
-        //Reading in the attributes
-        if (line.substr(0,2) == "@a") {
-            attributes new_attr;
-            size_t itr1 = line.find(' ');
-            size_t itr2 = line.find(' ', itr1+1);
-            new_attr.name = line.substr(itr1+1, itr2-itr1-1);
-            new_attr.type = line.substr(itr2+1); //TODO: clean up type input
-            attr.push_back(new_attr);
-        }
-        //reading in the data
-        //assumes that data does not contain commas
-        //commas are used for the delimiter only
-        if (line.substr(0, 1) != "@" && line.find(",") != string::npos) {
-            vector<string> row;
-            string entry = "";
-            for (int i = 0; i < line.size(); i++) {
-                if (line[i] != ',') {
-                    entry += line[i];
-                }
-                else {
-                    row.push_back(entry);
-                    entry = "";
-                }
-            }
-            row.push_back(entry);
-            data.push_back(row);
-        }
-    }
-    in.close();
-    
-    cout << "\nList of Attributes:" << endl;
-    for( unsigned int i = 0; i < attr.size(); i++)
-    {
-        cout << i << ". " << attr[i].name << endl;
-    }
-    
-    unsigned int num = 0;
     cout << "\nPlease enter how many decision attributes you would like: ";
-    string num_input;
     cin >> num_input;
     num = atoi(num_input.c_str());
     
@@ -94,8 +52,7 @@ int main() {
     }
     num = 1; //TESTING PURPOSES ONLY
 
-
-    vector<unsigned int> decAttr(num,-1);
+	vector<unsigned int> decAttr(num,-1);
     cout << "Please enter the numbers of all decision attributes: " << endl;
     /*for(unsigned int i = 0; i < num; i++)
     {
@@ -179,7 +136,79 @@ int main() {
     
     bool unnecessary_dropped = ((unnecessary_input == "y")? true: false);
         
-        //Reporting
+    //Prints the Report
+	Report( filename, maxAttr, minCoverage, unnecessary_dropped, attr, decAttr);
+    return 0;
+}
+
+
+// Funtion that does File IO and Pasering stuff
+void Parser( vector<attributes> &attr, vector< vector<string> > &data)
+{
+    string filename;
+    string line;
+    string relation;
+
+	// Gets the name of the input file
+    cout<<"Enter a filename: ";
+    //cin>>filename;
+    filename = "table3_10_fg.arff"; //TESTING PURPOSES ONLY
+    
+    ifstream in;
+    in.open(filename.c_str());
+    
+    if(!in.is_open()) {
+        cout << "Failed to open file" << endl;
+        exit(2);
+    }
+    
+    //Parses ARFF file
+    while (getline(in, line)) {
+        //Reading in the attributes
+        if (line.substr(0,2) == "@a") {
+            attributes new_attr;
+            size_t itr1 = line.find(' ');
+            size_t itr2 = line.find(' ', itr1+1);
+            new_attr.name = line.substr(itr1+1, itr2-itr1-1);
+            new_attr.type = line.substr(itr2+1); //TODO: clean up type input
+            attr.push_back(new_attr);
+        }
+        //reading in the data
+        //assumes that data does not contain commas
+        //commas are used for the delimiter only
+        if (line.substr(0, 1) != "@" && line.find(",") != string::npos) {
+            vector<string> row;
+            string entry = "";
+            for (int i = 0; i < line.size(); i++) {
+                if (line[i] != ',') {
+                    entry += line[i];
+                }
+                else {
+                    row.push_back(entry);
+                    entry = "";
+                }
+            }
+            row.push_back(entry);
+            data.push_back(row);
+        }
+    }
+    in.close();
+}
+
+
+// Prints a list of each name in the vector of attributes attr
+void listAttributes( vector < attributes > attr)
+{
+	cout << "\nList of Attributes:" << endl;
+    for( unsigned int i = 0; i < attr.size(); i++)
+    {
+        cout << i << ". " << attr[i].name << endl;
+    }
+}
+
+// Prints out the final results 
+void Report( string filename, int maxAttr, int minCoverage, bool unnecessary_dropped, vector <attributes> attr, vector<unsigned int> decAttr)
+{
     cout << "\n----------OUTPUT----------\n";
     cout << "Name of input file: " << filename << endl;
     cout << "\nMaximum number of attributes to be considered for a covering: " << maxAttr;
@@ -191,8 +220,6 @@ int main() {
         cout << attr[decAttr[i]].name;
         cout << ((i < decAttr.size()-1)? ", ":"]\n");
     }
-    
-    
+   
     cout << endl; //one more empty line for the hell of it, and we're done
-    return 0;
 }
