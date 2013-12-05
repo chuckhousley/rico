@@ -491,7 +491,7 @@ void rico(vector<covering> cover, vector< vector<string> > data, vector<unsigned
   {
       for(unsigned int i = 0; i < rules[input].size(); i++)
       { 
-        rules[input][i].instances = 1;
+        rules[input][i].instances = cover[input].partitions[i].size();
         for( unsigned int j = 0; j < cover[input].partitions[i].size(); j++)
         { 
           rules[input][i].data.push_back(data[cover[input].partitions[i][j]][cover[input].attributes[j]]);
