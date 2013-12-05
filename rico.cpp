@@ -118,7 +118,6 @@ int main() {
     minCoverage = 1; //TESTING PURPOSES ONLY
     
     
-    vector< vector<string> > rico = data;
     cout << "\nCreating Partitions" << endl;
     
     //THIS MIGHT NOT ACTUALLY DO ANYTHING IMPORTANT//
@@ -280,14 +279,14 @@ int main() {
         cout << endl;
     }
     
-    exit(1);
+    
     
     
 
     // coverings to size maxAttr
     
     //rico
-    //rico(cover, data, decAttr);
+    rico(cover, data, decAttr);
     //After Running rico
 
 
