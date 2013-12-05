@@ -57,7 +57,7 @@ int main() {
     cin >> num_input;
     num = atoi(num_input.c_str());
     
-    while (num == 0 || num > attr.size()) {
+    while (num == 0 || num >= attr.size()) {
         cout << "Invalid input, please enter how many decision attributes you would like: ";
         cin >> num_input;
         num = atoi(num_input.c_str());
@@ -387,9 +387,11 @@ void Parser( vector<attributes> &attr, vector< vector<string> > &data, string &f
     ifstream in;
     in.open(filename.c_str());
     
-    if(!in.is_open()) {
+    while(!in.is_open()) {
         cout << "Failed to open file" << endl;
-        exit(2);
+		cout <<"Enter a filemane: ";
+		cin >> filename;
+        in.open(filename.c_str());
     }
 
 
