@@ -467,41 +467,44 @@ void Report( string filename, int maxAttr, int minCoverage, bool unnecessary_dro
 }
 
 void rico(vector<covering> cover, vector< vector<string> > data, vector<unsigned int> decAttr)
-{
-  unsigned int input = 0;
-  cout << "Please Choose a Covering:" << endl;
-  // List of Coverings 
-  // listCoverings();
-  cin >> input;
-  // Check to make sure input is valid
+{ 
+  vector < vector<rule> > rules;
   
-  vector <rule> rules(cover[input].partitions.size());
-  for(unsigned int i = 0; i < rules.size(); i++)
-  { 
-    rules[i].instances = 1;
-	for( unsigned int j = 0; j < cover[input].partitions[i].size(); j++)
-    { 
-	  rules[i].data.push_back(data[cover[input].partitions[i][j]][cover[input].attributes[j]]);
-	}
-	// Adds Value of Decision Attribute to the set
-	for( unsigned int j = 0; j < decAttr.size(); j++)
-	{
-	  //for( unsigned int k = 0; k < data[k].size(); j++)
-		rules[i].data.push_back(data[i][decAttr[j]]);
-	}
+  
+  for (int input = 0; input < cover.size(); input++) 
+  {
+      rules.resize(cover.size(), vector<rule> (cover[input].partitions.size()));
+      for(unsigned int i = 0; i < rules.size(); i++)
+      { 
+        rules[input][i].instances = 1;
+        for( unsigned int j = 0; j < cover[input].partitions[i].size(); j++)
+        { 
+          rules[input][i].data.push_back(data[cover[input].partitions[i][j]][cover[input].attributes[j]]);
+        }
+        // Adds Value of Decision Attribute to the set
+        for( unsigned int j = 0; j < decAttr.size(); j++)
+        {
+          //for( unsigned int k = 0; k < data[k].size(); j++)
+            rules[input][i].data.push_back(data[i][decAttr[j]]);
+        }
+      }
   }
   cout << "[" << endl;
   cout << "[";
-  for ( unsigned int i = 0; i < rules.size(); i++)
+  
+  for( unsigned int input = 0; input < rules.size();input++)
   {
-    cout << "[";
-    for( unsigned int j = 0; j < rules[i].data.size(); j++)
-	{
-	  cout << rules[i].data[j] << ", ";
-	}
-	cout << "]";
-	cout << rules[i].instances << "]" << endl;
-  }
+    for ( unsigned int i = 0; i < rules[input].size(); i++)
+    {
+        cout << "[";
+        for( unsigned int j = 0; j < rules[input][i].data.size(); j++)
+        {
+            cout << rules[input][i].data[j] << ", ";
+        }
+        cout << "]";
+        cout << rules[input][i].instances << "]" << endl;
+    }
+   }
     /*
   for ( unsigned int i = 0; i < rules.size(); i++)
   {
