@@ -15,25 +15,52 @@ struct attributes{
     string type;
 };
 
-struct coverings{
-    string P;
-    vector< vector<int> > rows;
+struct covering{
+     vector<unsigned int> attributes;
+    vector< vector<int> > partitions;
+};
+
+struct rule{
+vector <string> data; 
+int instances;
 };
 
 void Parser( vector<attributes> &attr, vector< vector<string> > &data);
 void listAttributes( vector < attributes > attr);
 void Report( string filename, int maxAttr, int minCoverage, bool unnecessary_dropped, vector <attributes> attr, vector <unsigned int> decAttr);
+void rico( vector <covering> cover, vector < vector < string> > data, vector<unsigned int> decAttr);
 
 int main() {
     string filename = "I need to fix this";
 	string num_input;
+	string maxAttr_input;
     unsigned int maxAttr = 0, minCoverage = 1;
     unsigned int num = 0;
 	
     vector<attributes> attr;
     vector< vector<string> > data;
-    vector<coverings> cover;
-    
+    vector<covering> cover(1);
+	vector <int> c0;
+	c0.push_back(0);
+	c0.push_back(2);
+    cover[0].partitions.push_back(c0);
+	vector <int> c1;
+	c0.push_back(1);
+	c0.push_back(3);
+    cover[0].partitions.push_back(c1);
+	vector <int> c2;
+	c0.push_back(4);
+	c0.push_back(5);
+    cover[0].partitions.push_back(c2);
+	vector <int> c3;
+	c0.push_back(6);
+	c0.push_back(7);
+    cover[0].partitions.push_back(c3);
+	
+	cover[0].attributes.push_back(0);
+	cover[0].attributes.push_back(2);
+	
+	
 	// Does the File IO things 
 	// and parsers the Input
 	Parser( attr, data);
@@ -86,7 +113,6 @@ int main() {
     decAttr[0] = 5; //TESTING PURPOSES
     //decAttr[1] = 4;
     
-    string maxAttr_input;
     cout << "Please enter the maxium # of attributes to be considered as a covering: ";
     cin >> maxAttr_input;
     maxAttr = atoi(maxAttr_input.c_str());
@@ -97,30 +123,12 @@ int main() {
     }
 
     // Generates Coverings single attr
-    for( unsigned int i = 0; i < attr.size(); i++)
-    {
-        coverings newCover;
-        newCover.P = attr[i].name;
-        for( unsigned int j = 0; j < data[i].size(); j++)
-        {
-            vector<int> rows;
-            for( unsigned int k = 0; k < data[i].size(); k++)
-            {                
-                if( (data[i][j] == data[i][k]) && j != k)
-                {
-                    rows.push_back(j);
-                    //cout << data[i][j] << "=" << data[i][k] <<endl;                        
-                }
-            }
-            newCover.rows.push_back(rows);
-        }
-        cover.push_back(newCover);
-    }
-
+    
     // coverings to size maxAttr
     
     //rico
-    
+    rico( cover, data, decAttr);
+	
     //After Running rico
     cout << "Please enter the minimum coverage required for a rule: ";
     cin >> minCoverage;
@@ -222,4 +230,56 @@ void Report( string filename, int maxAttr, int minCoverage, bool unnecessary_dro
     }
    
     cout << endl; //one more empty line for the hell of it, and we're done
+}
+
+void rico( vector <covering> cover, vector < vector < string> > data, vector<unsigned int> decAttr)
+{
+  unsigned int input = 0;
+  cout << "Please Choose a Covering:" << endl;
+  // List of Coverings 
+  // listCoverings();
+  cin >> input;
+  // Check to make sure input is valid
+  
+  vector <rule> rules(cover[input].partitions.size());
+  for(unsigned int i = 0; i < rules.size(); i++)
+  { 
+    rules[i].instances = 1;
+	for( unsigned int j = 0; j < cover[input].partitions[i].size(); j++)
+    { 
+	  rules[i].data.push_back(data[cover[input].partitions[i][j]][cover[input].attributes[j]]);
+	}
+	// Adds Value of Decision Attribute to the set
+	for( unsigned int j = 0; j < decAttr.size(); j++)
+	{
+	  //for( unsigned int k = 0; k < data[k].size(); j++)
+		rules[i].data.push_back(data[i][decAttr[j]]);
+	}
+  }
+  cout << "[" << endl;
+  cout << "[";
+  for ( unsigned int i = 0; i < rules.size(); i++)
+  {
+    cout << "[";
+    for( unsigned int j = 0; j < rules[i].data.size(); j++)
+	{
+	  cout << rules[i].data[j] << ", ";
+	}
+	cout << "]";
+	cout << rules[i].instances << "]" << endl;
+  }
+  cout << "]" << endl;
+  /*
+  for ( unsigned int i = 0; i < rules.size(); i++)
+  {
+    for( unsigned int j = i+1; j < rules.size(); j++)
+	{
+	  if ( rule[i] == rule[j])
+	  {
+	     rule.erase(j);
+		 rule[i].instances++;
+	  }
+	}
+  }
+  }*/
 }
