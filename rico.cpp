@@ -8,6 +8,7 @@ Presented by Computer Science 301
 #include <string>
 #include <vector>
 #include <cstdlib>
+#include <algorithm>
 using namespace std;
 
 struct attributes{
@@ -27,7 +28,8 @@ struct covering{
 };
 
 unsigned int factorial(unsigned int n);
-vector< vector<int> > generateCombinations(vector<attributes> attr, vector<unsigned int> decAttr, unsigned int maxAttr);
+bool comparePartitions(vector< vector<int> > p1, vector< vector<int> > p2);
+vector< vector<unsigned int> > generateCombinations(vector<attributes> attr, vector<unsigned int> decAttr, unsigned int maxAttr);
 
 int main() {
     string filename;
@@ -38,7 +40,7 @@ int main() {
     vector<attributes> attr;
     vector< vector<string> > data;
     vector<covering> cover;
-    vector< vector<int> > combinations;
+    vector< vector<unsigned int> > combinations;
     
     // Gets the name of the input file
     cout<<"Enter a filename: ";
@@ -174,11 +176,6 @@ int main() {
     
     combinations = generateCombinations(attr, decAttr, maxAttr);
     
-    cout<< "Decision attributes: ";
-    for (int i = 0; i < decAttr.size(); i++) {
-        cout << decAttr[i];
-    }
-    
     cout << "\nCombinations to consider:" << endl;
     for (int i = 0; i < combinations.size(); i++) {
         for (int j = 0; j < combinations[i].size(); j++) {
@@ -234,6 +231,98 @@ int main() {
         cout << "] ";
     }
     cout << "]" << endl;
+    
+    
+    
+    for (int i = 0; i < combinations.size(); i++) {
+        covering new_cover;
+        new_cover.attributes = combinations[i];
+        
+        vector<int> row_nums;
+        for (int j = 0; j < data.size(); j++) {
+            row_nums.push_back(j);
+        }
+        vector<string> row;
+        bool its_a_subset = true;
+        
+        while(true) {
+            vector<int> partition;
+            int current_row = -1;
+            for (int j = 0; j < row_nums.size(); j++) {
+                if (row_nums[j] != -1) {
+                    current_row = j;
+                    row = data[j];
+                    break;
+                }
+            }
+            if (current_row == -1) {break;}
+            partition.push_back(current_row);
+            row_nums[current_row] = -1;
+            
+            for (int j = 1; j < row_nums.size(); j++) {
+                bool same = true;
+                for (int k = 0; k < new_cover.attributes.size(); k++) {
+                    if(row[new_cover.attributes[k]] != data[j][new_cover.attributes[k]] || row_nums[j] == -1) {
+                        same = false;
+                    }
+                }
+                if(same) {
+                    partition.push_back(j);
+                    row_nums[j] = -1;
+                }
+            }
+            
+            int num_to_find = partition.size();
+            bool partition_added = false;
+            for (int j = 0; j < decision.partitions.size(); j++) {
+                int num_found = 0;
+                for (int k = 0; k < num_to_find; k++) {
+                    if (count(decision.partitions[j].begin(), decision.partitions[j].end(), partition[k])) {
+                        num_found++;
+                    }
+                }
+                if (num_found == num_to_find) {
+                    new_cover.partitions.push_back(partition);
+                    partition_added = true;
+                    break;
+                }
+            }
+            if (!partition_added) {
+                its_a_subset = false;
+                break;
+            }
+        }
+        
+        if (its_a_subset) {
+            bool its_minimal = true;
+            for (int j = 0; j < cover.size(); j++) {
+                int num_to_find = cover[j].attributes.size();
+                int num_found = 0;
+                for(int k = 0; k < num_to_find; k++) {
+                    if (count(new_cover.attributes.begin(), new_cover.attributes.end(), cover[j].attributes[k])) {
+                        num_found++;
+                    }
+                }
+                vector< vector<int> > p1 = new_cover.partitions;
+                vector< vector<int> > p2 = cover[j].partitions;
+                if (num_to_find == num_found && comparePartitions(p1, p2)) {
+                    its_minimal = false;
+                }
+            }
+            
+            if (its_minimal) {
+                cover.push_back(new_cover);
+            }
+        }
+    }
+    cout << cover.size() << endl;
+    for (int i = 0; i < cover.size(); i++) {
+        for (int j = 0; j < cover[i].attributes.size(); j++) {
+            cout << cover[i].attributes[j];
+        }
+        cout << endl;
+    }
+    
     exit(1);
     
     
@@ -276,10 +365,10 @@ int main() {
 }
 
 
-vector< vector<int> > generateCombinations(vector<attributes> attr, vector<unsigned int> decAttr, unsigned int maxAttr) {
-    vector< vector<int> > combinations;
-    for (int i = 0; i < attr.size(); i++) { //finds non-decision attrs
-        vector<int> new_combination;
+vector< vector<unsigned int> > generateCombinations(vector<attributes> attr, vector<unsigned int> decAttr, unsigned int maxAttr) {
+    vector< vector<unsigned int> > combinations;
+    for (unsigned int i = 0; i < attr.size(); i++) { //finds non-decision attrs
+        vector<unsigned int> new_combination;
         bool decision = false;
         for (int j = 0; j < decAttr.size(); j++){
             if (i == decAttr[j]) { // if current attr is decision attr, don't add it
@@ -292,14 +381,14 @@ vector< vector<int> > generateCombinations(vector<attributes> attr, vector<unsig
         }
     }
     
-    int itr1 = 0;
-    int itr2 = 1;
+    unsigned int itr1 = 0;
+    unsigned int itr2 = 1;
     int old_size = combinations.size();
     int new_size = combinations.size();
     for (int i = 2; i <= maxAttr; i++) {
         while (itr1 < new_size - 1) {
             while (itr2 < old_size) {
-                vector<int> new_combination;
+                vector<unsigned int> new_combination;
                 new_combination = combinations[itr1];
                 new_combination.push_back(combinations[itr2][0]);
                 combinations.push_back(new_combination);
@@ -322,4 +411,24 @@ unsigned int factorial(unsigned int n)
     if (n == 0)
        return 1;
     return n * factorial(n - 1);
+}
+
+
+bool comparePartitions(vector< vector<int> > p1, vector< vector<int> > p2) {
+    if(p1.size() != p2.size()) {
+        return false;
+    }
+    
+    for (int i = 0; i < p1.size(); i++) {
+        if (p1[i].size() != p2[i].size()) {
+            return false;
+        }
+        
+        for (int m = 0; m < p1[i].size(); m++) {
+            if (p1[i][m] != p2[i][m]) {
+                return false;
+            }
+        }
+    }
+    return true;
 }
