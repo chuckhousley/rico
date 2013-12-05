@@ -28,13 +28,13 @@ struct covering{
 
 bool comparePartitions(vector< vector<int> > p1, vector< vector<int> > p2);
 vector< vector<unsigned int> > generateCombinations(vector<attributes> attr, vector<unsigned int> decAttr, unsigned int maxAttr);
-void Parser( vector<attributes> &attr, vector< vector<string> > &data);
+void Parser( vector<attributes> &attr, vector< vector<string> > &data, string &filename);
 void listAttributes( vector < attributes > attr);
 void Report( string filename, int maxAttr, int minCoverage, bool unnecessary_dropped, vector <attributes> attr, vector <unsigned int> decAttr);
 void rico(vector<covering> cover, vector< vector<string> > data, vector<unsigned int> decAttr);
 
 int main() {
-    string filename = "I need to fix this";
+    string filename;
 	string num_input;
 	string maxAttr_input;
 	string minCoverage_input;
@@ -48,7 +48,7 @@ int main() {
     vector< vector<unsigned int> > combinations;
     // Does the File IO things 
 	// and parsers the Input
-	Parser( attr, data);
+	Parser( attr, data, filename);
    
     // Lists Attributes
     listAttributes( attr);  
@@ -129,9 +129,11 @@ int main() {
         final_ruleset_size += (n / k);
     }*/
     
-    
+    // Generates a set of all possible combinations to attempt to
+	// make coverings
     combinations = generateCombinations(attr, decAttr, maxAttr);
-    
+    /*
+	// Uncomment out this to show all possible combinations
     cout << "\nCombinations to consider:" << endl;
     for (int i = 0; i < combinations.size(); i++) {
         for (int j = 0; j < combinations[i].size(); j++) {
@@ -139,7 +141,7 @@ int main() {
         }
         cout << "\n";
     }
-    
+    */
     //create decision base covering (not actually a covering, but what other coverings are based on)
     covering decision;
     decision.attributes = decAttr;
@@ -273,6 +275,7 @@ int main() {
     }
     cout << cover.size() << endl;
     for (int i = 0; i < cover.size(); i++) {
+		cout << i << ". " ;
         for (int j = 0; j < cover[i].attributes.size(); j++) {
             cout << cover[i].attributes[j];
         }
@@ -371,9 +374,8 @@ bool comparePartitions(vector< vector<int> > p1, vector< vector<int> > p2) {
 
 
 // Funtion that does File IO and Pasering stuff
-void Parser( vector<attributes> &attr, vector< vector<string> > &data)
+void Parser( vector<attributes> &attr, vector< vector<string> > &data, string &filename)
 {
-    string filename;
     string line;
     string relation;
 
@@ -469,10 +471,21 @@ void Report( string filename, int maxAttr, int minCoverage, bool unnecessary_dro
 void rico(vector<covering> cover, vector< vector<string> > data, vector<unsigned int> decAttr)
 { 
   vector < vector<rule> > rules;
-  for(int i = 0; i < cover.size(); i ++)
+  for( int i = 0; i < cover.size(); i ++)
 	rules.resize(cover.size(), vector<rule> (cover[i].partitions.size()));
   
-  for (int input = 0; input < cover.size(); input++) 
+  vector < vector<string> > E = data;
+  for ( unsigned int i = 0; i < cover.size(); i++) 
+  {
+	E.resize(cover.size(), vector<string> (data[i].size()));
+	for( unsigned int j = 0; j < data[i].size(); j++)
+	{
+		
+    }
+ }
+  //cout <<"Number of covers " <<cover.size() << endl;
+  
+  for (unsigned int input = 0; input < cover.size(); input++) 
   {
       for(unsigned int i = 0; i < rules[input].size(); i++)
       { 
@@ -496,13 +509,18 @@ void rico(vector<covering> cover, vector< vector<string> > data, vector<unsigned
     cout << "[";
     for ( unsigned int i = 0; i < rules[input].size(); i++)
     {
-        cout << "[";
+        cout << "[[";
+		
         for( unsigned int j = 0; j < rules[input][i].data.size(); j++)
         {
-            cout << rules[input][i].data[j] << ", ";
+            cout << rules[input][i].data[j];
+			if( j != rules[input][i].data.size()-1)
+				cout << ", ";
         }
         cout << "]";
-        cout << rules[input][i].instances << "]," << endl;
+        cout << rules[input][i].instances << "]";
+		if(i != rules[input].size()-1)
+			cout << "," << endl;
     }
 	cout << "]" << endl;
   }
