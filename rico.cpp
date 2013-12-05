@@ -37,6 +37,7 @@ int main() {
     string filename = "I need to fix this";
 	string num_input;
 	string maxAttr_input;
+	string minCoverage_input;
     unsigned int maxAttr = 0, minCoverage = 1;
 
     unsigned int num = 0;
@@ -106,7 +107,6 @@ int main() {
     }*/
     maxAttr = 4; //TESTING PURPOSES ONLY
     
-    string minCoverage_input;
     cout << "Please enter the minimum coverage required for a rule: ";
     /*cin >> minCoverage_input;
     minCoverage = atoi(minCoverage_input.c_str());
@@ -469,12 +469,12 @@ void Report( string filename, int maxAttr, int minCoverage, bool unnecessary_dro
 void rico(vector<covering> cover, vector< vector<string> > data, vector<unsigned int> decAttr)
 { 
   vector < vector<rule> > rules;
-  
+  for(int i = 0; i < cover.size(); i ++)
+	rules.resize(cover.size(), vector<rule> (cover[i].partitions.size()));
   
   for (int input = 0; input < cover.size(); input++) 
   {
-      rules.resize(cover.size(), vector<rule> (cover[input].partitions.size()));
-      for(unsigned int i = 0; i < rules.size(); i++)
+      for(unsigned int i = 0; i < rules[input].size(); i++)
       { 
         rules[input][i].instances = 1;
         for( unsigned int j = 0; j < cover[input].partitions[i].size(); j++)
@@ -484,16 +484,16 @@ void rico(vector<covering> cover, vector< vector<string> > data, vector<unsigned
         // Adds Value of Decision Attribute to the set
         for( unsigned int j = 0; j < decAttr.size(); j++)
         {
-          //for( unsigned int k = 0; k < data[k].size(); j++)
-            rules[input][i].data.push_back(data[i][decAttr[j]]);
-        }
+          rules[input][i].data.push_back(data[i][decAttr[j]]);
+			
+		}
       }
   }
-  cout << "[" << endl;
-  cout << "[";
-  
   for( unsigned int input = 0; input < rules.size();input++)
   {
+    cout << "Rules for cover: " << input << endl;
+    cout << "[" << endl;
+    cout << "[";
     for ( unsigned int i = 0; i < rules[input].size(); i++)
     {
         cout << "[";
@@ -502,20 +502,8 @@ void rico(vector<covering> cover, vector< vector<string> > data, vector<unsigned
             cout << rules[input][i].data[j] << ", ";
         }
         cout << "]";
-        cout << rules[input][i].instances << "]" << endl;
+        cout << rules[input][i].instances << "]," << endl;
     }
-   }
-    /*
-  for ( unsigned int i = 0; i < rules.size(); i++)
-  {
-    for( unsigned int j = i+1; j < rules.size(); j++)
-	{
-	  if ( rule[i] == rule[j])
-	  {
-	     rule.erase(j);
-		 rule[i].instances++;
-	  }
-	}
+	cout << "]" << endl;
   }
-  }*/
 }
