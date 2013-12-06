@@ -17,7 +17,7 @@ struct attributes{
 };
 
 struct rule{
-    vector <string> data; 
+    vector <string> data;
     int instances;
 };
 
@@ -31,7 +31,7 @@ vector< vector<unsigned int> > generateCombinations(vector<attributes> attr, vec
 void Parser( vector<attributes> &attr, vector< vector<string> > &data, string &filename);
 void listAttributes( vector < attributes > attr);
 void Report( string filename, int maxAttr, int minCoverage, bool unnecessary_dropped, vector <attributes> attr, vector <unsigned int> decAttr);
-void rico(vector<covering> cover, vector< vector<string> > data, vector<unsigned int> decAttr);
+void rico(vector<covering> cover, vector< vector<string> > data, vector<unsigned int> decAttr, vector<attributes> attr, int minCoverage);
 
 int main() {
     string filename;
@@ -46,36 +46,43 @@ int main() {
     vector< vector<string> > data;
     vector<covering> cover;
     vector< vector<unsigned int> > combinations;
-    // Does the File IO things 
-	// and parsers the Input
+    cout << "----Welcome to Rule Induced from COverings----" << endl;
+	cout << endl;
+	// Prompts the User for a ARRF file 
+	// and parses the content of that file 
+	// into the attr and data variables 
 	Parser( attr, data, filename);
    
     // Lists Attributes
+	// with there indexes so a user can 
+	// make his/her selections
     listAttributes( attr);  
     cout << "\nPlease enter how many decision attributes you would like: ";
-    /*string num_input;
     cin >> num_input;
     num = atoi(num_input.c_str());
-    
+     // Validates user input 
     while (num == 0 || num >= attr.size()) {
         cout << "Invalid input, please enter how many decision attributes you would like: ";
         cin >> num_input;
         num = atoi(num_input.c_str());
-    }*/
-    num = 1; //TESTING PURPOSES ONLY
+    }
     
     vector<unsigned int> decAttr(num,-1);
-    cout << "Please enter the numbers of all decision attributes: " << endl;
-    /*for(unsigned int i = 0; i < num; i++)
+    cout << "Please enter the numbers of all decision attributes (separate by enter key): " << endl;
+    // takes and validates user input 
+    for(unsigned int i = 0; i < num; i++)
     {
-        cout << "Attribute " << i << ": ";
         bool duplicate = true;
         while (duplicate) {
             duplicate = false;
             string dec_input;
             cin >> dec_input;
+            while (dec_input.size() > 1 && atoi(dec_input.substr(0, 1).c_str()) == 0) {
+                cout << "Invalid input, try again: ";
+                cin >> dec_input;
+            }
             int dec_input_i = atoi(dec_input.c_str());
-            while (dec_input_i < 1 || dec_input_i > attr.size()-1) {
+            while (dec_input_i < 0 || dec_input_i > attr.size()-1) {
                 cout << "Invalid input, try again: ";
                 cin >> dec_input;
                 dec_input_i = atoi(dec_input.c_str());
@@ -93,29 +100,28 @@ int main() {
                 cout << "Duplicate number detected, please choose another: ";
             }
         }
-    }*/
-    decAttr[0] = 77; //TESTING PURPOSES
+    }
 
 
     cout << "Please enter the maxium # of attributes to be considered as a covering: ";
-    /*cin >> maxAttr_input;
+    cin >> maxAttr_input;
     maxAttr = atoi(maxAttr_input.c_str());
+    //validates user input
     while (maxAttr == 0 || maxAttr > attr.size() - decAttr.size()) {
         cout << "Invalid input, try again: ";
         cin >> maxAttr_input;
         maxAttr = atoi(maxAttr_input.c_str());
-    }*/
-    maxAttr = 1; //TESTING PURPOSES ONLY
+    }
     
     cout << "Please enter the minimum coverage required for a rule: ";
-    /*cin >> minCoverage_input;
+    cin >> minCoverage_input;
     minCoverage = atoi(minCoverage_input.c_str());
+    //validates user input
     while (minCoverage == 0 || minCoverage > data.size()) {
         cout << "Invalid input, please try again: ";
         cin >> minCoverage_input;
         minCoverage = atoi(minCoverage_input.c_str());
-    }*/
-    minCoverage = 1; //TESTING PURPOSES ONLY
+    }
     
     
     // Generates a set of all possible combinations to attempt to
@@ -134,7 +140,7 @@ int main() {
     //create decision base covering (not actually a covering, but what other coverings are based on)
     covering decision;
     decision.attributes = decAttr;
-    
+  	// Generates all coverings for the specified decision attribute  
     vector<int> row_nums;
     for (int i = 0; i < data.size(); i++) {
         row_nums.push_back(i);
@@ -169,7 +175,7 @@ int main() {
         }
         decision.partitions.push_back(partition);
     }
-    cout << "decision covering: [";
+    /*cout << "decision covering: [";
     for (int i = 0; i < decision.partitions.size(); i++) {
         cout << "[";
         for (int j = 0; j < decision.partitions[i].size(); j++) {
@@ -177,14 +183,14 @@ int main() {
         }
         cout << "] ";
     }
-    cout << "]" << endl;
+    cout << "]" << endl;*/ //prints the covering of decision attributes
     
     
     
     for (int i = 0; i < combinations.size(); i++) {
         covering new_cover;
         new_cover.attributes = combinations[i];
-        
+
         vector<int> row_nums;
         for (int j = 0; j < data.size(); j++) {
             row_nums.push_back(j);
@@ -262,7 +268,7 @@ int main() {
             }
         }
     }
-    cout << cover.size() << endl;
+    cout << "Number of coverings found: " << cover.size() << endl;
     for (int i = 0; i < cover.size(); i++) {
 		cout << i << ". " ;
         for (int j = 0; j < cover[i].attributes.size(); j++) {
@@ -270,27 +276,20 @@ int main() {
         }
         cout << endl;
     }
-    
-    
-    
-    
-
-    // coverings to size maxAttr
-    
-    //rico
-    rico(cover, data, decAttr);
-    //After Running rico
+    // Calls the rice algorithm 
+	// which generates rules
+    rico(cover, data, decAttr, attr, minCoverage);
 
 
     string unnecessary_input;
-    cout << "Should unnecessary conditions be dropped? (y/n): ";
+    cout << "Should unnecessary conditions be dropped? (y/n): n\n";
     /*cin >> unnecessary_input;
-    
+    //Validates User input
     while (unnecessary_input != "y" && unnecessary_input != "n") {
         cout << "Please enter 'y' or 'n': ";
         cin >> unnecessary_input;
     }*/
-    unnecessary_input = "n"; //TESTING PURPOSES
+    unnecessary_input = "n"; //hahaha we don't care
     
     bool unnecessary_dropped = ((unnecessary_input == "y")? true: false);
         
@@ -299,7 +298,7 @@ int main() {
     return 0;
 }
 
-
+// Function that generates all possible combinations of attributes 
 vector< vector<unsigned int> > generateCombinations(vector<attributes> attr, vector<unsigned int> decAttr, unsigned int maxAttr) {
     vector< vector<unsigned int> > combinations;
     for (unsigned int i = 0; i < attr.size(); i++) { //finds non-decision attrs
@@ -341,7 +340,7 @@ vector< vector<unsigned int> > generateCombinations(vector<attributes> attr, vec
 }
 
 
-
+// Function compares two sets of rows to see if they are same
 bool comparePartitions(vector< vector<int> > p1, vector< vector<int> > p2) {
     if(p1.size() != p2.size()) {
         return false;
@@ -361,8 +360,8 @@ bool comparePartitions(vector< vector<int> > p1, vector< vector<int> > p2) {
     return true;
 }
 
-
-// Funtion that does File IO and Pasering stuff
+// Function that takes a user specified AFFR file and then parses it and
+// stores the parsed data in the data and attr variables 
 void Parser( vector<attributes> &attr, vector< vector<string> > &data, string &filename)
 {
     string line;
@@ -370,10 +369,7 @@ void Parser( vector<attributes> &attr, vector< vector<string> > &data, string &f
 
 	// Gets the name of the input file
     cout<<"Enter a filename: ";
-    //cin>>filename;
-    //filename = "table3_10_fg.arff"; //TESTING PURPOSES ONLY
-    filename = "wilkinsonMatrix.arff";
-    
+    cin>>filename;
     ifstream in;
     in.open(filename.c_str());
     
@@ -419,8 +415,8 @@ void Parser( vector<attributes> &attr, vector< vector<string> > &data, string &f
 }
 
 
-
-// Prints a list of each name in the vector of attributes attr
+// Prints a list of each name in the vector of attributes attr along with
+// its index
 void listAttributes( vector < attributes > attr)
 {
 	cout << "\nList of Attributes:" << endl;
@@ -430,7 +426,7 @@ void listAttributes( vector < attributes > attr)
     }
 }
 
-// Prints out the final results 
+// Prints out the final report
 void Report( string filename, int maxAttr, int minCoverage, bool unnecessary_dropped, vector <attributes> attr, vector<unsigned int> decAttr)
 {
     cout << "\n----------OUTPUT----------\n";
@@ -450,43 +446,68 @@ void Report( string filename, int maxAttr, int minCoverage, bool unnecessary_dro
     cout << endl; //one more empty line for the hell of it, and we're done
 }
 
-void rico(vector<covering> cover, vector< vector<string> > data, vector<unsigned int> decAttr)
+// Function RICOS enough said
+void rico(vector<covering> cover, vector< vector<string> > data, vector<unsigned int> decAttr, vector<attributes> attr, int minCoverage)
 { 
   vector < vector<rule> > rules;
-  for( int i = 0; i < cover.size(); i ++)
-	rules.resize(cover.size(), vector<rule> (cover[i].partitions.size()));
-  
-  cout <<"Number of covers " <<cover.size() << endl;
-  
+  for (int i = 0; i < decAttr.size(); i++) {
+      vector<string> value;
+      vector<int> occurences;
+      for (int j = 0; j < data.size(); j++) {
+        bool added = false;
+        for (int k = 0; k < value.size(); k++) {
+            if (data[j][decAttr[i]] == value[k]) {
+                occurences[k]++;
+                added = true; 
+                break;
+            }
+        }
+        if (!added) {
+            value.push_back(data[j][decAttr[i]]);
+            occurences.push_back(1);
+        }
+      }
+      cout << "Distribution of values for " << attr[decAttr[i]].name << ":" << endl;
+      for (int j = 0; j < value.size(); j++) {
+        cout << "Value: " << value[j] << " Occurrences: " << occurences[j] <<endl;
+      }
+  }
   for (unsigned int input = 0; input < cover.size(); input++) 
   {
-    cout << "cover: " << input << endl;
-      for(unsigned int i = 0; i < rules[input].size(); i++)
-      { 
-        cout << "rule: " << i << endl;
-        rules[input][i].instances = cover[input].partitions[i].size();
-        cout << "one" << endl;
-        for( unsigned int j = 0; j < cover[input].partitions[i].size(); j++)
-        { 
-            cout << "two" << endl;
-          rules[input][i].data.push_back(data[cover[input].partitions[i][j]][cover[input].attributes[j]]);
-        }
-        // Adds Value of Decision Attribute to the set
-        for( unsigned int j = 0; j < decAttr.size(); j++)
-        {
-            cout << "three" << endl;
-          rules[input][i].data.push_back(data[i][decAttr[j]]);
-			
-		}
+    covering current_covering = cover[input];
+    vector<rule> current_rule_set;
+    vector<unsigned int> current_attributes = current_covering.attributes;
+    for (int i = 0; i < current_covering.partitions.size(); i++) { //gets each partition
+        rule new_rule;
+        vector<int> current_partition = current_covering.partitions[i];
+        new_rule.instances = current_partition.size();
+            for (int k = 0; k < current_attributes.size(); k++) {//
+                new_rule.data.push_back(data[current_partition[0]][k]);
+            }
+            for (int k = 0; k < decAttr.size(); k++) {
+                new_rule.data.push_back(data[current_partition[0]][decAttr[k]]);
+            }
+            
+            current_rule_set.push_back(new_rule);
       }
+      rules.push_back(current_rule_set);
+      
   }
   for( unsigned int input = 0; input < rules.size();input++)
   {
-    cout << "Rules for cover: " << input << endl;
+    int too_few = 0;
+    for (int i = 0; i < rules[input].size(); i++) {
+        if(rules[input][i].instances < minCoverage) {too_few++;}
+    }
+    if (too_few == rules[input].size()) {
+        cout << "All rules for covering " << input << " do not meet the minimum requirements for a rule, skipping" << endl;
+        continue;
+    }
+    cout << "\nRules for cover: " << input << endl;
     cout << "[" << endl;
-    cout << "[";
     for ( unsigned int i = 0; i < rules[input].size(); i++)
     {
+        if (rules[input][i].instances < minCoverage) {break;}
         cout << "[[";
 		
         for( unsigned int j = 0; j < rules[input][i].data.size(); j++)
