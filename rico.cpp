@@ -94,7 +94,7 @@ int main() {
             }
         }
     }*/
-    decAttr[0] = 4; //TESTING PURPOSES
+    decAttr[0] = 77; //TESTING PURPOSES
 
 
     cout << "Please enter the maxium # of attributes to be considered as a covering: ";
@@ -105,7 +105,7 @@ int main() {
         cin >> maxAttr_input;
         maxAttr = atoi(maxAttr_input.c_str());
     }*/
-    maxAttr = 4; //TESTING PURPOSES ONLY
+    maxAttr = 1; //TESTING PURPOSES ONLY
     
     cout << "Please enter the minimum coverage required for a rule: ";
     /*cin >> minCoverage_input;
@@ -117,17 +117,6 @@ int main() {
     }*/
     minCoverage = 1; //TESTING PURPOSES ONLY
     
-    
-    cout << "\nCreating Partitions" << endl;
-    
-    //THIS MIGHT NOT ACTUALLY DO ANYTHING IMPORTANT//
-    /*int non_decision_attributes = attr.size() - decAttr.size();
-    int final_ruleset_size = 0;
-    for (int i = 1; i <= maxAttr; i++) {
-        int n = factorial(non_decision_attributes);
-        int k = (factorial(i) * factorial(non_decision_attributes - i));
-        final_ruleset_size += (n / k);
-    }*/
     
     // Generates a set of all possible combinations to attempt to
 	// make coverings
@@ -382,7 +371,8 @@ void Parser( vector<attributes> &attr, vector< vector<string> > &data, string &f
 	// Gets the name of the input file
     cout<<"Enter a filename: ";
     //cin>>filename;
-    filename = "table3_10_fg.arff"; //TESTING PURPOSES ONLY
+    //filename = "table3_10_fg.arff"; //TESTING PURPOSES ONLY
+    filename = "wilkinsonMatrix.arff";
     
     ifstream in;
     in.open(filename.c_str());
@@ -421,17 +411,10 @@ void Parser( vector<attributes> &attr, vector< vector<string> > &data, string &f
                     entry = "";
                 }
             }
-
-
             row.push_back(entry);
             data.push_back(row);
         }
-
-
-
     }
-
-
     in.close();
 }
 
@@ -440,9 +423,6 @@ void Parser( vector<attributes> &attr, vector< vector<string> > &data, string &f
 // Prints a list of each name in the vector of attributes attr
 void listAttributes( vector < attributes > attr)
 {
-
-
-
 	cout << "\nList of Attributes:" << endl;
     for( unsigned int i = 0; i < attr.size(); i++)
     {
@@ -476,29 +456,25 @@ void rico(vector<covering> cover, vector< vector<string> > data, vector<unsigned
   for( int i = 0; i < cover.size(); i ++)
 	rules.resize(cover.size(), vector<rule> (cover[i].partitions.size()));
   
-  vector < vector<string> > E = data;
-  for ( unsigned int i = 0; i < cover.size(); i++) 
-  {
-	E.resize(cover.size(), vector<string> (data[i].size()));
-	for( unsigned int j = 0; j < data[i].size(); j++)
-	{
-		
-    }
- }
-  //cout <<"Number of covers " <<cover.size() << endl;
+  cout <<"Number of covers " <<cover.size() << endl;
   
   for (unsigned int input = 0; input < cover.size(); input++) 
   {
+    cout << "cover: " << input << endl;
       for(unsigned int i = 0; i < rules[input].size(); i++)
       { 
+        cout << "rule: " << i << endl;
         rules[input][i].instances = cover[input].partitions[i].size();
+        cout << "one" << endl;
         for( unsigned int j = 0; j < cover[input].partitions[i].size(); j++)
         { 
+            cout << "two" << endl;
           rules[input][i].data.push_back(data[cover[input].partitions[i][j]][cover[input].attributes[j]]);
         }
         // Adds Value of Decision Attribute to the set
         for( unsigned int j = 0; j < decAttr.size(); j++)
         {
+            cout << "three" << endl;
           rules[input][i].data.push_back(data[i][decAttr[j]]);
 			
 		}
